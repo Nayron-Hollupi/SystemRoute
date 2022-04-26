@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Route.Domain.Model.WorkTeam>
+
+@{
+    ViewData["Title"] = "Equipes Cadastradas";
+}
+<br /><br />
+<div class="row d-flex justify-content-center text-center">
+     <h1>Equipes Cadastradas</h1></div>
+
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+             <th>
+                <a asp-action="Create">Cadastrar</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Person)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+        
+            <td>
+                 <a asp-action="Details" asp-route-id="@item.Id">Visualizar</a> |
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |  
+                <a asp-action="Delete" asp-route-id="@item.Id">Deletar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

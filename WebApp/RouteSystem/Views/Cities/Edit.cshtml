@@ -1,0 +1,70 @@
+﻿@model Route.Domain.Model.City
+
+@{
+    ViewData["Title"] = "Editar cidade";
+}
+
+<br /><br />
+<div class="row d-flex justify-content-center text-center">
+<h1>Editar Cidade</h1>
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                	<br />
+					<label asp-for="State" class="control-label"></label>
+               
+				   <select class="form-select" asp-for="State">
+					<option value=""></option>
+					<option value="Acre">Acre</option>
+					<option value="Alagoas">Alagoas</option>
+					<option value="Amapá">Amapá</option>
+					<option value="Amazonas">Amazonas</option>
+					<option value="Bahia">Bahia</option>
+					<option value="Ceará">Ceará</option>
+					<option value="Distrito Federal">Distrito Federal</option>
+					<option value="Espírito Santo">Espírito Santo</option>
+					<option value="Goiás">Goiás</option>
+					<option value="Maranhão">Maranhão</option>
+					<option value="Mato Grosso">Mato Grosso</option>
+					<option value="Mato Grosso do Sul">Mato Grosso do Sul</option>
+					<option value="Minas Gerais">Minas Gerais</option>
+					<option value="Pará">Pará</option>
+					<option value="Paraíba">Paraíba</option>
+					<option value="Paraná">Paraná</option>
+					<option value="Pernambuco">Pernambuco</option>
+					<option value="Piauí">Piauí</option>
+					<option value="Rio de Janeiro">Rio de Janeiro</option>
+					<option value="Rio Grande do Norte">Rio Grande do Norte</option>
+					<option value="Rio Grande do Sul">Rio Grande do Sul</option>
+					<option value="Rondônia">Rondônia</option>
+					<option value="Roraima">Roraima</option>
+					<option value="Santa Catarina">Santa Catarina</option>
+					<option value="São Paulo">São Paulo</option>
+					<option value="Sergipe">Sergipe</option>
+					<option value="Tocantins">Tocantins</option>
+				</select>
+		
+            </div>
+          
+            <input type="hidden" asp-for="Id" />
+                <div class="form-group d-grid gap-2">
+                <br />
+                <input type="submit" value="Editar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    
+<div>
+    <br />
+	  <a asp-action="Create">Cadastrar</a> | 
+    <a asp-action="Index">Visualizar Cidades Cadastradas</a>
+</div>
+</div>
+
+

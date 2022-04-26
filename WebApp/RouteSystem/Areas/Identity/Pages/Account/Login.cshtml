@@ -1,0 +1,61 @@
+﻿@page
+@model LoginModel
+
+@{
+	ViewData["Title"] = "Acessar";
+}
+
+<br />
+
+<div class="row d-flex justify-content-center text-center">
+	<div class="col-md-4">
+		<br />
+		<h1>@ViewData["Title"]</h1>
+
+
+		<form id="account" method="post">
+
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="form-group  ">
+				<label asp-for="Input.Email"></label>
+				<input asp-for="Input.Email" class="form-control   " />
+				<span asp-validation-for="Input.Email" class="text-danger"></span>
+			</div>
+			<div class="form-group ">
+				<br />
+				<label asp-for="Input.Password">Senha</label>
+				<input asp-for="Input.Password" class="form-control" />
+				<span asp-validation-for="Input.Password" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<div class="checkbox">
+					<br />
+					<label asp-for="Input.RememberMe">
+
+						<input asp-for="Input.RememberMe" />
+						Lembrar senha?
+					</label>
+				</div>
+			</div>
+
+
+			<div class="d-grid gap-2">
+				<br />
+				<button type="submit" class="btn btn-primary">Acessar</button>
+			</div>
+
+			<div class="form-group">
+				<br />
+				<p>
+					<a id="forgot-password" asp-page="./ForgotPassword">Esqueci minha senha?</a>
+				</p>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

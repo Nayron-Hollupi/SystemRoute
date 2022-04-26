@@ -1,0 +1,43 @@
+﻿
+@{
+	ViewData["Title"] = "SelectHeader";
+	int valor = 0;
+}
+<br />
+<div class="row">
+	<div class="form-control">
+
+		<div class="d-flex justify-content-between">
+			<h1 class="d-flex justify-content-center">Geração de documento</h1>
+			
+		</div>
+		<form asp-action="GenereatorDoc">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label>Times</label><br />
+					@foreach (var team in ViewBag.TeamCity)
+					{
+						<input name="checkTeamService" type="checkbox" value=@team.Id id="TeamCity">
+						<label for="@team.Name"> @team.Name</label>
+						<br />
+					}
+				</div>
+				<br />
+				<hr />
+				<div class="form-group">
+					@foreach (var header in ViewBag.ReadFile)
+					{
+						<input name="checkHeader" type="checkbox" value=@valor>
+						<label for="@header"> @header</label>
+						<br />
+						valor++;
+					}
+				</div>
+				<br />
+				<input type="submit" value="Gerar DOC" class="btn btn-outline-secondary" id="btnNext" />
+			</div>
+		</form>
+	</div>
+</div>
+
+

@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "SelectCity";
+}
+<br />
+<br />
+<div class="row d-flex justify-content-center text-center">
+
+<h1 class="text-center">Criação de Rotas</h1>
+<br />
+
+	<div class="col-md-4">
+		<form asp-action="SelectFile">
+			<br />
+			<div class="form-group">
+				<label class="control-label">Cidades</label> <br /><br />
+				<select asp-items="@(new SelectList(ViewBag.AllCity,"Name", "Name"))" class="form-control" name="Name" id="Name" onchange="getCity()" required>
+					<option value="">CIDADES...</option>
+				</select>
+			</div>
+			<br />
+			<div class="form-group">
+				<label class="control-label">Serviços</label> <br /><br />
+				<select asp-items="@(new SelectList(ViewBag.AllService))" class="form-control" name="serviceName" id="serviceName"  onchange="getServise()" required>
+					<option value="" >SERVIÇOS...</option>
+				</select>
+			
+			</div>
+			<br />
+		
+			<div class="d-grid gap-2">
+				<input type="submit" value="Confirmar" class="btn btn-success" id="buttonProx" />
+			</div>
+		</form>
+	</div>
+</div>
+
+
+

@@ -1,0 +1,31 @@
+﻿@model Route.Domain.Model.City
+
+@{
+    ViewData["Title"] = "Visualizar cidade";
+}
+<br />
+
+
+<div>
+<h1>Cidade </h1>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.State)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.State)
+        </dd>
+      
+    </dl>
+</div>
+<div>
+     <a asp-action="Create">Cadastrar</a> | 
+    <a asp-action="Edit" asp-route-id="@Model.Id">Editar</a> |
+    <a asp-action="Index">Visualizar Cidades Cadastradas </a>
+</div>

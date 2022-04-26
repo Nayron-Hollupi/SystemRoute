@@ -1,0 +1,58 @@
+﻿
+@using Route.Domain.Model
+@using Serviceapplication.ServiceCity
+@using Serviceapplication.ServicePerson
+@model Route.Domain.Model.WorkTeam
+@{
+    ViewData["Title"] = "Cadastrar equipe";
+}
+
+<br />
+<div class="row d-flex justify-content-center text-center">
+    <h1>Cadastrar Equipe</h1> 
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>   
+            	<br />
+
+			<div class="form-group">
+				</> <label asp-for="City" class="control-label"></label><br /><br />
+				<select  class="form-select"  asp-for="City" id="City">
+					@foreach (City city in await ServiceCityApp.GetCity())
+					{
+						<option value="@city.Name"> @city.Name </option>
+					}
+				</select>
+			
+			</div>
+		<br />
+			<div class="form-group form-switch">
+				<label asp-for="Person" class="control-label"></label><br />
+				@foreach (var person in await ServicePersonApp.GetPersonStatus())
+				{
+					<input class="form-check-input" name="Person" type="checkbox" value=@person.Name>
+					<label for="@person.Name"> @person.Name</label>
+					<br />
+				}
+			</div>
+			<br />
+        
+     
+            <div class="form-group d-grid gap-2">
+                <input type="submit" value="Cadastrar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    <div>
+		<br />
+    <a asp-action="Index">Visualizar Equipes cadastradas</a>
+</div>
+<br /><br />
+</div>
+
+

@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewData["Title"] = "Carregar Arquivo";
+}
+
+<div class="text-center">
+@using (Html.BeginForm("TeamOperationCity", "route", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+	<div class="text-center">
+		<br>
+
+		<h1 class="display-4 text-center">Carregar Arquivo</h1>
+		<br>
+		<label for="formFile" class="form-label mt-4">Escolha o Arquivo .xlsx</label>
+
+		<input class="form-control border border-secondary" type="file" id="formFile" name="file" multiple onchange="getFile()"/>
+
+		  <div class="form-group d-grid gap-2"><br /><br />
+		<input type="submit" value="Upload" class="btn btn-primary d-flex justify-content-center" id="btnNext" disabled/>
+		@ViewBag.Message</div>
+	</div>
+}
+<script type="text/javascript">
+
+	getFile = () => {
+		let FileSelected = document.querySelector('#formFile').value;
+
+		if(FileSelected != "default")
+			document.querySelector("#btnNext").disabled = false;
+		}
+
+</script>
+
+
+
+</div>

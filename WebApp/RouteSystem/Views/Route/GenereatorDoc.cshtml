@@ -1,10 +1,15 @@
 ﻿@{
 	ViewData["Title"] = "Documento Gerado";
 }
+<br /><br />
+<div class="row text-center ">
+	<form asp-action="Download">
 
-<div class="rowjustify-content-center ">
+			<input type="submit" value="Download" class="btn btn-outline-secondary justify-content-center" />
+		
+	</form>
 
-	 <h1> Arquivo foi .DOC foi gerado com sucesso</h1>
+	 <br />
 	<a asp-controller="Home" asp-action="Index" class="alert-link">Retornar Upload</a>.
 </div>
 

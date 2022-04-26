@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
@@ -16,13 +17,18 @@ namespace RouteSystem.Controllers
     public class RouteController : Controller
     {
 
-
+        private static IWebHostEnvironment _hostEnvironment;
         public static List<List<string>> routes = new();
         public static List<string> headers = new();
         public static IEnumerable<string> serviceList;
         public static string service;
         public static string city;
+        public static string downloadFile;
 
+        public RouteController(IWebHostEnvironment hostEnvironment)
+        {
+            _hostEnvironment = hostEnvironment;
+        }
         public IActionResult Index()
         {
             return View();
@@ -131,12 +137,17 @@ namespace RouteSystem.Controllers
 
             var seachCity = await ServiceCityApp.SeachCityName(city);
 
-            ServiceDocApp.CreateDoc(teams, headerSelect, routes, service, seachCity);
-         
+            var filename = await ServiceDocApp.CreateDoc(teams, headerSelect, routes, service, seachCity, _hostEnvironment.WebRootPath);
+            downloadFile = $"{_hostEnvironment.WebRootPath}//files//{filename}";
 
             return View();
         }
-
+        public FileContentResult Download()
+        {
+            var fileName = downloadFile.Split("//").ToList();
+            var file = System.IO.File.ReadAllBytes(downloadFile);
+            return File(file, "application/octet-stream", fileName.Last().ToString());
+        }
 
     }
 }

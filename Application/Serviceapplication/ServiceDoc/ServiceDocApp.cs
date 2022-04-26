@@ -11,7 +11,7 @@ namespace Serviceapplication.ServiceDoc
     public class ServiceDocApp
     {
 
-        public static async void CreateDoc(List<WorkTeam> team, List<string> checkOption, List<List<string>> routes, string serviceSelect, City city)
+        public static async Task<string> CreateDoc(List<WorkTeam> team, List<string> checkOption, List<List<string>> routes, string serviceSelect, City city, string rootPath)
         {
             var routesCount = routes.Count;
             var allColumn = routes[0];
@@ -30,10 +30,17 @@ namespace Serviceapplication.ServiceDoc
             var restDivision = routes.Count % team.Count;
 
             var index = 0;
+            var pathFiles = $"{rootPath}//files";
 
-            var filename = $@"C:\Users\Nayron\OneDrive\Área de Trabalho\ArquivoRotas\-{serviceSelect}-{DateTime.Now:dd-MM-yyyy}.docx";
+            if (!Directory.Exists(pathFiles))
+                Directory.CreateDirectory(pathFiles);
 
-            using (FileStream fileStream = new(filename, FileMode.CreateNew))
+            var filename = $"Rota-{serviceSelect}.docx";
+
+            var pathFile = $"{pathFiles}//{filename}";
+            // var filename = $@"C:\Users\Nayron\OneDrive\Área de Trabalho\ArquivoRotas\-{serviceSelect}-{DateTime.Now:dd-MM-yyyy}.docx";
+
+            using (FileStream fileStream = new(pathFile, FileMode.Create))
             {
                 await using (StreamWriter writer = new(fileStream, Encoding.UTF8))
                 {
@@ -74,6 +81,7 @@ namespace Serviceapplication.ServiceDoc
                 }
                 fileStream.Close();
             }
+            return filename;
         }
     }
 }

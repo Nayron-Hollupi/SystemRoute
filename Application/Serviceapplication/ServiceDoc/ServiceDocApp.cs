@@ -23,7 +23,7 @@ namespace Serviceapplication.ServiceDoc
             for (int i = 0; i < routesCount; i++)
             {
                 routes.Remove(routes.Find(route => route[cityColumn].ToUpper() != city.Name.ToUpper()));
-                //routes.Remove(routes.Find(route => route[serviceColumn].ToUpper() != serviceSelect.ToUpper()));
+                routes.Remove(routes.Find(route => route[serviceColumn].ToUpper() != serviceSelect.ToUpper()));
             }
 
             var divisionTeam = routes.Count / team.Count;
@@ -74,7 +74,7 @@ namespace Serviceapplication.ServiceDoc
                         if (restDivision >= 0)
                             divisionTeam--;
 
-                        writer.WriteLine("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-");
+                        writer.WriteLine("");
                     }
 
                     writer.Close();

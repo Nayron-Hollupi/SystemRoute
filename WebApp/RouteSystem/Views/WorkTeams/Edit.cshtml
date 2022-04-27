@@ -33,12 +33,12 @@
 			
 			</div>
                	<div class="form-group form-switch">
-       <br /> 	<label  class="control-label">Pessoas da Equipe: </label><br />
-				@foreach (var person in   ViewBag.PersonTeam)
+       <br /> 	<label  class="control-label">Desmarque para excluir Pessoas da Equipe: </label><br />
+				@foreach (var person in ViewBag.PersonTeam)
 				{
-					<input  class="form-check-input"  name="checkPeopleRemoveTeam" type="checkbox" value=@person.Name>
+					<input  class="form-check-input"  name="ExistTeam" type="checkbox"  value=@person checked="">
 
-					<label for="@person.Name"> @person.Name</label>
+					<label for="@person"> @person</label>
 
 					<br />
 				}

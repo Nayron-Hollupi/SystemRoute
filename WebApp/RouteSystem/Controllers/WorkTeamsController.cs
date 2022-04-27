@@ -55,9 +55,9 @@ namespace RouteSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Person,City,CreatedAt,LastUpdateDate,User,Id")] WorkTeam workTeam)
+        public async Task<IActionResult> Create([Bind("Name,Person,City,Id")] WorkTeam workTeam)
         {
-          
+
             string line;
             int i = 0, peoplelimit = 0;
             var people = "";
@@ -77,7 +77,7 @@ namespace RouteSystem.Controllers
                     people = (values[i]);
                     peoplelimit++;
                     person.Status = true;
-                   ServicePersonApp.UpdatePerson(person.Id, person);
+                    ServicePersonApp.UpdatePerson(person.Id, person);
 
                 }
                 else if (i != 0 && person != null && person.Status == false)
@@ -91,7 +91,7 @@ namespace RouteSystem.Controllers
 
             string peopleTeam = people.ToString();
             workTeam.Person = peopleTeam;
-      
+
 
             if (peoplelimit == 0 || peoplelimit > 5)
             {
@@ -99,11 +99,11 @@ namespace RouteSystem.Controllers
             }
             if (ModelState.IsValid)
             {
-               ServiceTeamApp.PostWorkTeam(workTeam);
+                ServiceTeamApp.PostWorkTeam(workTeam);
                 return RedirectToAction(nameof(Index));
             }
             return View(workTeam);
-          
+
 
         }
 
@@ -117,10 +117,7 @@ namespace RouteSystem.Controllers
 
             var workTeam = await ServiceTeamApp.SeachWorkTeam(id);
 
-
-        
-
-            ViewBag.PersonTeam = workTeam;
+            ViewBag.PersonTeam = workTeam.Person.Split(",").ToList();
             if (workTeam == null)
             {
                 return NotFound();
@@ -133,56 +130,93 @@ namespace RouteSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,Person,City,CreatedAt,LastUpdateDate,User,Id")] WorkTeam workTeam)
+        public async Task<IActionResult> Edit(string id, [Bind("Name,Person,City,ExistTeam,Id")] WorkTeam workTeam)
         {
             if (id != workTeam.Id)
             {
                 return NotFound();
             }
-            var peoples = workTeam.Person;
-            string line;
+
+            string lineperson, line;
             int i = 0, peoplelimit = 0;
             var people = "";
 
-            line = Request.Form["Person"].ToString();
 
-            var values = line.Split(',');
+            var Team = await ServiceTeamApp.SeachWorkTeam(id);
+            lineperson = Team.Person;
 
-            for (; i < values.Length; i++)
+            var values = lineperson.Split(',');
+
+
+            string reference = Request.Form["ExistTeam"].ToString();
+            string referenceExist = Request.Form["Person"].ToString();
+
+
+            if (lineperson != reference)
             {
-
-                var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
-
-
-                if (peoplelimit == 0 && person != null && person.Status == false)
+                for (; i < values.Length; i++)
                 {
-                    people = (values[i]);
-                    peoplelimit++;
-                    person.Status = true;
-                    ServicePersonApp.UpdatePerson(person.Id, person);
+                    var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
 
-                }
-                else if (i != 0 && person != null && person.Status == false)
-                {
-                    people = (people + "," + values[i]);
-                    person.Status = true;
-                    ServicePersonApp.UpdatePerson(person.Id, person);
+                    if (person != null)
+                    {
+                        person.Status = false;
+                        ServicePersonApp.UpdatePerson(person.Id, person);
+                    }
+
                 }
 
             }
+                i = 0;
 
+            if (referenceExist != "")
+            {
+                line = Request.Form["Person"].ToString() + "," +
+                       Request.Form["ExistTeam"].ToString();
+            }else
+            {
+                line = Request.Form["ExistTeam"].ToString();
+            }
+                values = line.Split(',');
+
+
+                for (; i < values.Length; i++)
+                {
+                    if (values[i] != "")
+                    {
+                        var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
+
+
+                        if (peoplelimit == 0 && person != null )
+                        {
+                            people = (values[i]);
+                            peoplelimit++;
+                            person.Status = true;
+                            ServicePersonApp.UpdatePerson(person.Id, person);
+
+                        }
+                        else if (i != 0 && person != null )
+                        {
+                            people = (people + "," + values[i]);
+                            person.Status = true;
+                            ServicePersonApp.UpdatePerson(person.Id, person);
+                        }
+                    }
+                }
+            
+          
             string peopleTeam = people.ToString();
             workTeam.Person = peopleTeam;
-          
 
-            if (peoplelimit == 0 || peoplelimit > 5)
+
+
+            if (peoplelimit > 0 && peoplelimit <= 5)
             {
                 if (ModelState.IsValid)
                 {
                     try
                     {
-                        _context.Update(workTeam);
-                        await _context.SaveChangesAsync();
+                        ServiceTeamApp.UpdateWorkTeam(id, workTeam);
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -209,8 +243,8 @@ namespace RouteSystem.Controllers
                 return NotFound();
             }
 
-            var workTeam = await _context.WorkTeam
-                .FirstOrDefaultAsync(m => m.Id == id);
+
+            var workTeam = await ServiceTeamApp.SeachWorkTeam(id);
             if (workTeam == null)
             {
                 return NotFound();
@@ -224,9 +258,35 @@ namespace RouteSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var workTeam = await _context.WorkTeam.FindAsync(id);
-            _context.WorkTeam.Remove(workTeam);
-            await _context.SaveChangesAsync();
+
+            var workTeam = await ServiceTeamApp.SeachWorkTeam(id);
+
+            string line;
+            int i = 0, peoplelimit = 0;
+            var people = "";
+
+            line = workTeam.Person;
+
+            var values = line.Split(',');
+
+            for (; i < values.Length; i++)
+            {
+
+                var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
+
+
+                if (person != null && person.Status == true)
+                {
+                    people = (values[i]);
+                    peoplelimit++;
+                    person.Status = false;
+                    ServicePersonApp.UpdatePerson(person.Id, person);
+
+                }
+
+
+            }
+            ServiceTeamApp.DeleteWorkTeam(id);
             return RedirectToAction(nameof(Index));
         }
 

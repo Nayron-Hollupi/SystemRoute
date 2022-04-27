@@ -15,14 +15,14 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" class="form-control" required/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>   
             	<br />
 
 			<div class="form-group">
-				</> <label asp-for="City" class="control-label"></label><br /><br />
-				<select  class="form-select"  asp-for="City" id="City">
+				</> <label asp-for="City" class="control-label" ></label><br /><br />
+				<select  class="form-select"  asp-for="City" id="City"  required>
 					@foreach (City city in await ServiceCityApp.GetCity())
 					{
 						<option value="@city.Name"> @city.Name </option>
@@ -35,7 +35,7 @@
 				<label asp-for="Person" class="control-label"></label><br />
 				@foreach (var person in await ServicePersonApp.GetPersonStatus())
 				{
-					<input class="form-check-input" name="Person" type="checkbox" value=@person.Name>
+					<input class="form-check-input" name="Person" type="checkbox" value=@person.Name >
 					<label for="@person.Name"> @person.Name</label>
 					<br />
 				}

@@ -85,7 +85,7 @@ namespace RouteSystem.Controllers
                 {
                     List<string> contentLine = new();
                     check = false;
-                    for (int k = 1; k < colmuns; k++)
+                    for (int k = 1; k <= colmuns; k++)
                     {
                         var conteudo = worksheet.Cells[rows, k].Value?.ToString() ?? "";
                         contentLine.Add(conteudo);

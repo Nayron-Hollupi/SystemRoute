@@ -38,94 +38,122 @@ namespace RouteSystem.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult TeamOperationCity(IFormFile file)
-        {
-       
-            int cepColumn = 0;
-            int serviceColumn = 0;
-            bool check = false;
-            List<string> header = new();
-            List<string> listService = new();
-            List<List<string>> content = new();
+        public IActionResult UploadExcel(IFormFile file)
+        { 
+            var checkFile = "." + file.FileName.Split(".")[file.FileName.Split(".").Length - 1];
 
-
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using ExcelPackage fileexcel = new(file.OpenReadStream());
-            ExcelWorksheet worksheet = fileexcel.Workbook.Worksheets.FirstOrDefault();
-
-            var totalColumn = worksheet.Dimension.End.Column;
-            var totalRow = worksheet.Dimension.End.Row;
-
-            for (int column = 1; column < totalColumn; column++)
+            if (checkFile == ".xlsx" || checkFile == ".xls")
             {
-                header.Add(worksheet.Cells[1, column].Value.ToString());
 
-                if (worksheet.Cells[1, column].Value.ToString().ToUpper().Equals("CEP"))
-                    cepColumn = column - 1;
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using ExcelPackage excel = new(file.OpenReadStream());
+                ExcelWorksheet worksheet = excel.Workbook.Worksheets.FirstOrDefault();
+              
+                List<string> header = new();
+                List<string> listService = new();
+                var colmuns = worksheet.Dimension.End.Column;
+                var lines = worksheet.Dimension.End.Row;
+                List<List<string>> content = new();
+                bool check = false;
 
-                if (worksheet.Cells[1, column].Value.ToString().ToUpper().Equals("SERVIÇO"))
-                    serviceColumn = column;
-            }
+                int Cep = 0;
+                int cols = 0;
 
-            for (int row = 2; row < totalRow; row++)
-            {
-                for (int line = serviceColumn; line <= serviceColumn; line++)
+            
+                for (int i = 1; i <= colmuns ; i++)
                 {
-                    listService.Add(worksheet.Cells[row, serviceColumn].Value?.ToString() ?? null);
+                    header.Add(worksheet.Cells[1, i].Value.ToString());
+
+                    if (worksheet.Cells[1, i].Value.ToString().ToUpper().Equals("CEP"))
+                        Cep = i - 1;
+
+                    if (worksheet.Cells[1, i].Value.ToString().ToUpper().Equals("SERVIÇO"))
+                        cols = i;
                 }
-            }
 
-            worksheet.Cells[2, 1, totalRow, totalColumn].Sort(cepColumn, false);
-
-            for (int rows = 1; rows < totalRow; rows++)
-            {
-                List<string> contentLine = new();
-                check = false;
-                for (int columns = 1; columns < totalColumn; columns++)
+           
+                for (int row = 2; row <= lines; row++)
                 {
-                    var conteudo = worksheet.Cells[rows, columns].Value?.ToString() ?? "";
-                    contentLine.Add(conteudo);
-                    check = true;
-
+                    for (int line = cols; line <= cols; line++)
+                    {
+                        listService.Add(worksheet.Cells[row, cols].Value?.ToString() ?? null);
+                    }
                 }
-                if (check)
-                    content.Add(contentLine);
+                worksheet.Cells[2, 1, lines, colmuns].Sort(Cep, false);          
+             
+                for (int rows = 1; rows < lines; rows++)
+                {
+                    List<string> contentLine = new();
+                    check = false;
+                    for (int k = 1; k < colmuns; k++)
+                    {
+                        var conteudo = worksheet.Cells[rows, k].Value?.ToString() ?? "";
+                        contentLine.Add(conteudo);
+                        check = true;
+
+                    }
+                    if (check)
+                        content.Add(contentLine);
+                }
+
+                var removeRepeat = listService;
+                var listaSemDuplicidade = removeRepeat.Distinct().ToList();
+                headers = header;
+                routes = content;
+                serviceList = listaSemDuplicidade;
+
+                return RedirectToAction(nameof(CitySelect));
+            }
+            else
+            {
+
+                TempData["error"] = "Arquivo não compativo. " +
+                    "\nFavor verificar se é .xlsx.";
+
+                return RedirectToRoute(new { controller = "Home", action = "Index" });
+          
             }
 
-            var removeRepeatService = listService;
-            var listaSemDuplicidade = removeRepeatService.Distinct();
-            headers = header;
-            routes = content;
-            serviceList = listaSemDuplicidade;
-            return RedirectToAction(nameof(SelectCity));
+           
         }
 
-        public async Task<IActionResult> SelectCity()
+
+        public async Task<IActionResult> CitySelect()
         {
-            var localizarcity = ServiceCityApp.GetCity();
-            ViewBag.AllCity = await localizarcity;
+            var seachCity = ServiceCityApp.GetCity();
+            ViewBag.AllCity = await seachCity;
             ViewBag.AllService = serviceList;
             return View();
         }
 
-       public async Task<IActionResult> SelectFile()
+       public async Task<IActionResult> FileSelect()
         {
             city = Request.Form["Name"].ToString();
             service = Request.Form["serviceName"].ToString();
 
-            var team = ServiceTeamApp.SeachCityTeam(city); // Qual equipe vai em qual cidade
+            var team = ServiceTeamApp.SeachCityTeam(city);
             ViewBag.TeamCity = await team;
 
             ViewBag.ReadFile = headers;
-            return View();
+
+            
+                if (team.Result.Count != 0) {
+                    return View();
+                }
+                else
+                {
+                    TempData["error"] = "Não tem equipe para cidade selecionada!!";
+                    return RedirectToRoute(new { controller = "Route", action = "CitySelect" });
+                }
+          
         }
      
         [HttpPost]
         public async Task<IActionResult> GenereatorDoc()
         {
             List<WorkTeam> teams = new();
-            var teamSelect = Request.Form["checkTeamService"].ToList();
-            var headerSelect = Request.Form["checkHeader"].ToList();
+            var teamSelect = Request.Form["Team"].ToList();
+            var headerSelect = Request.Form["Header"].ToList();
 
 
 

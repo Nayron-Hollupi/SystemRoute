@@ -1,6 +1,6 @@
 ﻿
 @{
-	ViewData["Title"] = "SelectHeader";
+	ViewData["Title"] = "Seleção de cabeçalho";
 	int valor = 0;
 }
 <br />
@@ -18,7 +18,7 @@
 					<label>Times</label><br />
 					@foreach (var team in ViewBag.TeamCity)
 					{
-						<input name="checkTeamService" type="checkbox" value=@team.Id id="TeamCity">
+						<input name="Team" type="checkbox" value=@team.Id id="TeamCity">
 						<label for="@team.Name"> @team.Name</label>
 						<br />
 					}
@@ -28,7 +28,7 @@
 				<div class="form-group">
 					@foreach (var header in ViewBag.ReadFile)
 					{
-						<input name="checkHeader" type="checkbox" value=@valor>
+						<input name="Header" type="checkbox" value=@valor>
 						<label for="@header"> @header</label>
 						<br />
 						valor++;

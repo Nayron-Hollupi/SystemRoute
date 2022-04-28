@@ -65,45 +65,50 @@ namespace RouteSystem.Controllers
             line = Request.Form["Person"].ToString();
 
             var values = line.Split(',');
-
-            for (; i < values.Length; i++)
-            {
-
-                var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
-
-
-                if (peoplelimit == 0 && person != null && person.Status == false)
+            if (line != "" && line != null) {
+                for (; i < values.Length; i++)
                 {
-                    people = (values[i]);
-                    peoplelimit++;
-                    person.Status = true;
-                    ServicePersonApp.UpdatePerson(person.Id, person);
+
+                    var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
+
+
+                    if (peoplelimit == 0 && person != null && person.Status == false)
+                    {
+                        people = (values[i]);
+                        peoplelimit++;
+                        person.Status = true;
+                        ServicePersonApp.UpdatePerson(person.Id, person);
+
+                    }
+                    else if (i != 0 && person != null && person.Status == false)
+                    {
+                        people = (people + "," + values[i]);
+                        person.Status = true;
+                        ServicePersonApp.UpdatePerson(person.Id, person);
+                    }
 
                 }
-                else if (i != 0 && person != null && person.Status == false)
+
+                string peopleTeam = people.ToString();
+                workTeam.Person = peopleTeam;
+
+
+                if (peoplelimit == 0 || peoplelimit > 5)
                 {
-                    people = (people + "," + values[i]);
-                    person.Status = true;
-                    ServicePersonApp.UpdatePerson(person.Id, person);
+                    return NotFound();
                 }
-
-            }
-
-            string peopleTeam = people.ToString();
-            workTeam.Person = peopleTeam;
-
-
-            if (peoplelimit == 0 || peoplelimit > 5)
+                if (ModelState.IsValid)
+                {
+                    ServiceTeamApp.PostWorkTeam(workTeam);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(workTeam);
+             }
+            else
             {
-                return NotFound();
+                TempData["error"] = "A equipe tem que ter pelo menos 1 integrante!!";
+                return RedirectToRoute(new { controller = "WorkTeams", action = "Create" });
             }
-            if (ModelState.IsValid)
-            {
-                ServiceTeamApp.PostWorkTeam(workTeam);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(workTeam);
-
 
         }
 
@@ -151,32 +156,34 @@ namespace RouteSystem.Controllers
             string reference = Request.Form["ExistTeam"].ToString();
             string referenceExist = Request.Form["Person"].ToString();
 
-
-            if (lineperson != reference)
+            if (reference != "" && reference != null && referenceExist != "" && referenceExist != null)
             {
-                for (; i < values.Length; i++)
+                if (lineperson != reference)
                 {
-                    var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
-
-                    if (person != null)
+                    for (; i < values.Length; i++)
                     {
-                        person.Status = false;
-                        ServicePersonApp.UpdatePerson(person.Id, person);
+                        var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
+
+                        if (person != null)
+                        {
+                            person.Status = false;
+                            ServicePersonApp.UpdatePerson(person.Id, person);
+                        }
+
                     }
 
                 }
-
-            }
                 i = 0;
 
-            if (referenceExist != "")
-            {
-                line = Request.Form["Person"].ToString() + "," +
-                       Request.Form["ExistTeam"].ToString();
-            }else
-            {
-                line = Request.Form["ExistTeam"].ToString();
-            }
+                if (referenceExist != "")
+                {
+                    line = Request.Form["Person"].ToString() + "," +
+                           Request.Form["ExistTeam"].ToString();
+                }
+                else
+                {
+                    line = Request.Form["ExistTeam"].ToString();
+                }
                 values = line.Split(',');
 
 
@@ -187,7 +194,7 @@ namespace RouteSystem.Controllers
                         var person = await ServicePersonApp.GetPersonName(values[i].TrimStart(' ').TrimEnd(' '));
 
 
-                        if (peoplelimit == 0 && person != null )
+                        if (peoplelimit == 0 && person != null)
                         {
                             people = (values[i]);
                             peoplelimit++;
@@ -195,7 +202,7 @@ namespace RouteSystem.Controllers
                             ServicePersonApp.UpdatePerson(person.Id, person);
 
                         }
-                        else if (i != 0 && person != null )
+                        else if (i != 0 && person != null)
                         {
                             people = (people + "," + values[i]);
                             person.Status = true;
@@ -203,37 +210,43 @@ namespace RouteSystem.Controllers
                         }
                     }
                 }
-            
-          
-            string peopleTeam = people.ToString();
-            workTeam.Person = peopleTeam;
+
+
+                string peopleTeam = people.ToString();
+                workTeam.Person = peopleTeam;
 
 
 
-            if (peoplelimit > 0 && peoplelimit <= 5)
-            {
-                if (ModelState.IsValid)
+                if (peoplelimit > 0 && peoplelimit <= 5)
                 {
-                    try
+                    if (ModelState.IsValid)
                     {
-                        ServiceTeamApp.UpdateWorkTeam(id, workTeam);
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!WorkTeamExists(workTeam.Id))
+                        try
                         {
-                            return NotFound();
+                            ServiceTeamApp.UpdateWorkTeam(id, workTeam);
                         }
-                        else
+                        catch (DbUpdateConcurrencyException)
                         {
-                            throw;
+                            if (!WorkTeamExists(workTeam.Id))
+                            {
+                                return NotFound();
+                            }
+                            else
+                            {
+                                throw;
+                            }
                         }
+                        return RedirectToAction(nameof(Index));
                     }
-                    return RedirectToAction(nameof(Index));
                 }
+                return View(workTeam);
             }
-            return View(workTeam);
-        }
+            else
+            {
+                TempData["error"] = "A equipe tem que ter pelo menos 1 integrante!!";
+                return RedirectToRoute(new { controller = "WorkTeams", action = "Edit" });
+            }
+            }
 
         // GET: WorkTeams/Delete/5
         public async Task<IActionResult> Delete(string id)

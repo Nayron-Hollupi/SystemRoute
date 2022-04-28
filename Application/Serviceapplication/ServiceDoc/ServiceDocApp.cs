@@ -10,7 +10,6 @@ namespace Serviceapplication.ServiceDoc
 {
     public class ServiceDocApp
     {
-
         public static async Task<string> CreateDoc(List<WorkTeam> team, List<string> checkOption, List<List<string>> routes, string serviceSelect, City city, string rootPath)
         {
             var routesCount = routes.Count;
@@ -50,7 +49,7 @@ namespace Serviceapplication.ServiceDoc
                     {
                         writer.WriteLine("Time: " + item.Name + "\nRotas:\n");
 
-                        for (int i = 0; i < divisionTeam; i++)
+                       for (int i = 0; i < divisionTeam; i++)
                         {
                             if (i == 0 && restDivision > 0)
                                 divisionTeam++;
